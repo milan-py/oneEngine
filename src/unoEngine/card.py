@@ -1,0 +1,49 @@
+from dataclasses import dataclass
+
+from unoEngine.enums import *
+from unoEngine.rules import Rules
+
+
+@dataclass
+class Card:
+    color: Colors
+    card_type: CardTypes
+
+    def other_is_playable(self, other: 'Card', rules: Rules, previous_color_selection: Colors | None = None) -> bool:
+        if self.card_type.value <= 11:
+            return self.card_type == other.card_type or self.color == other.color or self.color == previous_color_selection
+        if self.card_type == CardTypes.ADD2:
+            return self.color == other.color or (other.card_type == CardTypes.ADD2 and rules.add_2_stackable)
+        elif other.card_type.value <= 11:
+            return True
+
+        return rules.black_on_black
+
+    def filter_playable_cards(self, deck: list['Card'], rules: Rules,
+                              previous_color_selection: Colors | None = None) -> list['Card']:
+        return list(filter(lambda card: self.other_is_playable(card, rules, previous_color_selection), deck))
+
+    def __repr__(self):
+        return f'Card({self.color.name}, {self.card_type.name})'
+
+
+def get_standard_card_deck() -> list[Card]:
+    card_deck: list[Card] = []
+
+    for color in range(4):
+        for card_type in range(1, 10):
+            card_deck.append(Card(Colors(color), CardTypes(card_type)))
+
+        card_deck.append(Card(Colors(color), CardTypes.BLOCK))
+        card_deck.append(Card(Colors(color), CardTypes.ROTATE))
+        card_deck.append(Card(Colors(color), CardTypes.ADD2))
+
+    card_deck = card_deck * 2
+
+    for color in range(4):
+        card_deck.append(Card(Colors(color), CardTypes.NUMBER_0))
+
+    card_deck += [Card(Colors.BLACK, CardTypes.COLOR_SELECT)] * 4
+    card_deck += [Card(Colors.BLACK, CardTypes.ADD4)] * 4
+
+    return card_deck

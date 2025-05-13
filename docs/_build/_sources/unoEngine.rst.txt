@@ -4,7 +4,7 @@ unoEngine package
 Module contents
 ---------------
 
-.. automodule:: unoEngine
+.. automodule:: src.unoEngine
    :members:
    :show-inheritance:
    :undoc-members:

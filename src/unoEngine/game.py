@@ -1,96 +1,8 @@
-from enum import Enum
-from dataclasses import dataclass
 from collections import deque
 from random import shuffle
-from pprint import pprint
 
-
-class CardTypes(Enum):
-    NUMBER_0 = 0
-    NUMBER_1 = 1
-    NUMBER_2 = 2
-    NUMBER_3 = 3
-    NUMBER_4 = 4
-    NUMBER_5 = 5
-    NUMBER_6 = 6
-    NUMBER_7 = 7
-    NUMBER_8 = 8
-    NUMBER_9 = 9
-    BLOCK = 10
-    ROTATE = 11
-    ADD2 = 12
-    COLOR_SELECT = 13
-    ADD4 = 14
-
-
-class Colors(Enum):
-    BLUE = 0
-    GREEN = 1
-    YELLOW = 2
-    RED = 3
-    BLACK = 4
-
-
-class Directions(Enum):
-    CLOCKWISE = 1
-    COUNTERCLOCKWISE = -1
-
-
-@dataclass()
-class Rules:
-    player_card_count = 7
-    black_on_black = True
-    zero_passes_on = True
-    seven_swaps = True
-    add_2_stackable = True
-    add_4_challengeable = True
-    draw_until_play = True
-    mandatory_playing = True
-
-
-@dataclass
-class Card:
-    color: Colors
-    card_type: CardTypes
-
-    def other_is_playable(self, other: 'Card', rules: Rules, previous_color_selection: Colors | None = None) -> bool:
-        if self.card_type.value <= 11:
-            return self.card_type == other.card_type or self.color == other.color or self.color == previous_color_selection
-        if self.card_type == CardTypes.ADD2:
-            return self.color == other.color or (other.card_type == CardTypes.ADD2 and rules.add_2_stackable)
-        elif other.card_type.value <= 11:
-            return True
-
-        return rules.black_on_black
-
-    def filter_playable_cards(self, deck: list['Card'], rules: Rules,
-                              previous_color_selection: Colors | None = None) -> list['Card']:
-        return list(filter(lambda card: self.other_is_playable(card, rules, previous_color_selection), deck))
-
-    def __repr__(self):
-        return f'Card({self.color.name}, {self.card_type.name})'
-
-
-def get_standard_card_deck() -> list[Card]:
-    card_deck: list[Card] = []
-
-    for color in range(4):
-        for card_type in range(1, 10):
-            card_deck.append(Card(Colors(color), CardTypes(card_type)))
-
-        card_deck.append(Card(Colors(color), CardTypes.BLOCK))
-        card_deck.append(Card(Colors(color), CardTypes.ROTATE))
-        card_deck.append(Card(Colors(color), CardTypes.ADD2))
-
-    card_deck = card_deck * 2
-
-    for color in range(4):
-        card_deck.append(Card(Colors(color), CardTypes.NUMBER_0))
-
-    card_deck += [Card(Colors.BLACK, CardTypes.COLOR_SELECT)] * 4
-    card_deck += [Card(Colors.BLACK, CardTypes.ADD4)] * 4
-
-    return card_deck
+from unoEngine.card import *
+from unoEngine.rules import Rules
 
 
 class Game:
@@ -137,14 +49,15 @@ class Game:
         """
         :param played_card_index: index of card played by current player. None if no card shall be played and instead a card should be drawn
         :param color_selection: a color except black must be given when played_card_index points to a card of type
-        :param swap_player_selection: 
-        :param add_4_challenged: 
+        :param swap_player_selection:
+        :param add_4_challenged:
         :return: True if card is playable or not playing is possible
         """
         if played_card_index is None:
-            if self.rules.mandatory_playing and self.open_card.filter_playable_cards(self.current_player_deck, self.rules, self.color_selection):
+            if self.rules.mandatory_playing and self.open_card.filter_playable_cards(self.current_player_deck,
+                                                                                     self.rules, self.color_selection):
                 return False
-            
+
             self._draw(self.current_turn)
             return True
 
@@ -193,8 +106,9 @@ class Game:
                 self.color_selection = color_selection
 
                 if (add_4_challenged and
-                    self.rules.add_4_challengeable and
-                    self.open_card.filter_playable_cards(self.current_player_deck, self.rules, self.color_selection) # player could have played different cards
+                        self.rules.add_4_challengeable and
+                        self.open_card.filter_playable_cards(self.current_player_deck, self.rules, self.color_selection)
+                        # player could have played different cards
                 ):
                     for _ in range(6):
                         self._draw(self.current_turn)
@@ -209,16 +123,3 @@ class Game:
     @property
     def identities(self):
         return [id(i) for i in self.player_decks]
-
-
-def main():
-    game = Game(2, Rules())
-    game.open_deck.append(Card(Colors.BLUE, CardTypes.NUMBER_5))
-
-    game.player_decks[0][0] = Card(Colors.BLUE, CardTypes.NUMBER_7)
-
-    print(game.player_decks)
-
-
-if __name__ == '__main__':
-    main()
