@@ -33,7 +33,7 @@ class Game:
                 self.player_decks[player].append(self.closed_deck.pop())
 
         self.rules = rules
-        self.current_turn = 0
+        self.current_turn: int = 0
         self.direction = Directions.CLOCKWISE
         self.color_selection: Colors | None = None
 
@@ -48,7 +48,7 @@ class Game:
              add_4_challenged: bool = False, ) -> bool:
         """
         :param played_card_index: index of card played by current player. None if no card shall be played and instead a card should be drawn
-        :param color_selection: a color except black must be given when played_card_index points to a card of type
+        :param color_selection: a color except black must be given when played_card_index points to a card of type.
         :param swap_player_selection:
         :param add_4_challenged:
         :return: True if card is playable or not playing is possible
@@ -59,6 +59,9 @@ class Game:
                 return False
 
             self._draw(self.current_turn)
+
+            if not self.rules.draw_until_play:
+                self.current_turn = self._step_index(self.current_turn, self.direction.value)
             return True
 
         played_card = self.current_player_deck[played_card_index]
@@ -78,7 +81,7 @@ class Game:
                     self.player_decks.append(begin)
 
             case CardTypes.NUMBER_7 if self.rules.seven_swaps:
-                if swap_player_selection == self.current_turn:
+                if swap_player_selection == self.current_turn or swap_player_selection is None:
                     raise ValueError('swap player must be someone else')
 
                 self.player_decks[self.current_turn], self.player_decks[swap_player_selection] \
@@ -105,11 +108,10 @@ class Game:
                     raise ValueError('color except black must be selected')
                 self.color_selection = color_selection
 
-                if (add_4_challenged and
-                        self.rules.add_4_challengeable and
-                        self.open_card.filter_playable_cards(self.current_player_deck, self.rules, self.color_selection)
-                        # player could have played different cards
-                ):
+                if (add_4_challenged and self.rules.add_4_challengeable and self.open_card.filter_playable_cards(
+                        self.current_player_deck, self.rules,
+                        self.color_selection
+                )):  # player could have played different cards
                     for _ in range(6):
                         self._draw(self.current_turn)
                 else:
@@ -117,6 +119,10 @@ class Game:
                         self._draw(self._step_index(self.current_turn, self.direction.value))
 
         self.current_turn = self._step_index(self.current_turn, self.direction.value)
+        self.open_deck.append(played_card)
+
+        if played_card.color != Colors.BLACK:
+            self.color_selection = None
 
         return True
 

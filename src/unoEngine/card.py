@@ -11,11 +11,14 @@ class Card:
 
     def other_is_playable(self, other: 'Card', rules: Rules, previous_color_selection: Colors | None = None) -> bool:
         if self.card_type.value <= 11:
-            return self.card_type == other.card_type or self.color == other.color or self.color == previous_color_selection
+            return self.card_type == other.card_type or self.color == other.color or other.color == Colors.BLACK
+
         if self.card_type == CardTypes.ADD2:
-            return self.color == other.color or (other.card_type == CardTypes.ADD2 and rules.add_2_stackable)
-        elif other.card_type.value <= 11:
-            return True
+            return (self.color == other.color and other.card_type != CardTypes.ADD2) or (
+                    other.card_type == CardTypes.ADD2 and rules.add_2_stackable)
+
+        if self.color == Colors.BLACK:
+            return other.color == previous_color_selection or (other.color == Colors.BLACK and rules.black_on_black)
 
         return rules.black_on_black
 
@@ -24,7 +27,7 @@ class Card:
         return list(filter(lambda card: self.other_is_playable(card, rules, previous_color_selection), deck))
 
     def __repr__(self):
-        return f'Card({self.color.name}, {self.card_type.name})'
+        return f'Card(Colors.{self.color.name}, CardTypes.{self.card_type.name})'
 
 
 def get_standard_card_deck() -> list[Card]:
