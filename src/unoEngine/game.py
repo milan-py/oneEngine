@@ -12,9 +12,18 @@ class Game:
 
     @property
     def open_card(self):
+        """
+        :return: last card of self.open_deck (i.e. most upper card)
+        """
         return self.open_deck[-1]
 
     def __init__(self, player_count: int, rules: Rules, deck: list[Card] | None = None):
+        """
+
+        :param player_count:
+        :param rules:
+        :param deck: list of cards that should be used in the game. get_standard_card_deck() used if None.
+        """
         if deck is None:
             deck = get_standard_card_deck()
         self.closed_deck: deque[Card] = deque(deck)
@@ -125,7 +134,3 @@ class Game:
             self.color_selection = None
 
         return True
-
-    @property
-    def identities(self):
-        return [id(i) for i in self.player_decks]

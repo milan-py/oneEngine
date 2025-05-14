@@ -10,6 +10,13 @@ class Card:
     card_type: CardTypes
 
     def other_is_playable(self, other: 'Card', rules: Rules, previous_color_selection: Colors | None = None) -> bool:
+        """
+        determines whether a given card can be played on top self.
+        :param other: other card that shall be stacked on self.
+        :param rules: rules applying to the game.
+        :param previous_color_selection: must be given if self is black and therefore a color has been selected.
+        :return: True if other can be stacked on self.
+        """
         if self.card_type.value <= 11:
             return self.card_type == other.card_type or self.color == other.color or other.color == Colors.BLACK
 
@@ -24,13 +31,22 @@ class Card:
 
     def filter_playable_cards(self, deck: list['Card'], rules: Rules,
                               previous_color_selection: Colors | None = None) -> list['Card']:
-        return list(filter(lambda card: self.other_is_playable(card, rules, previous_color_selection), deck))
+        """
+        :param deck: list of cards that should be filtered
+        :param rules: rules applying to the game.
+        :param previous_color_selection: must be given if self is black and therefore a color has been selected.
+        :return: list of cards that can be stacked on self.
+        """
+        return [card for card in deck if self.other_is_playable(card, rules, previous_color_selection)]
 
     def __repr__(self):
         return f'Card(Colors.{self.color.name}, CardTypes.{self.card_type.name})'
 
 
 def get_standard_card_deck() -> list[Card]:
+    """
+    :return: standard uno deck see: https://de.m.wikipedia.org/wiki/Datei:UNO_cards_deck.svg
+    """
     card_deck: list[Card] = []
 
     for color in range(4):
