@@ -82,7 +82,7 @@ class Game:
 
         match played_card.card_type:
             case CardTypes.NUMBER_0 if self.rules.zero_passes_on:
-                if self.direction == Directions.CLOCKWISE:
+                if self.direction is Directions.CLOCKWISE:
                     self.player_decks.insert(0, self.player_decks.pop())
                 else:
                     begin = self.player_decks[0]
@@ -100,7 +100,7 @@ class Game:
                 self.current_turn = self._step_index(self.current_turn, self.direction.value)
 
             case CardTypes.ROTATE:
-                self.direction = Directions.CLOCKWISE if self.direction == Directions.COUNTERCLOCKWISE else Directions.COUNTERCLOCKWISE
+                self.direction = Directions.CLOCKWISE if self.direction is Directions.COUNTERCLOCKWISE else Directions.COUNTERCLOCKWISE
 
             case CardTypes.ADD2:
                 index = self._step_index(self.current_turn, self.direction.value)
@@ -108,12 +108,12 @@ class Game:
                 self._draw(index)
 
             case CardTypes.COLOR_SELECT:
-                if color_selection is None or color_selection == Colors.BLACK:
+                if color_selection is None or color_selection is Colors.BLACK:
                     raise ValueError('color except black must be selected')
                 self.color_selection = color_selection
 
             case CardTypes.ADD4:
-                if color_selection is None or color_selection == Colors.BLACK:
+                if color_selection is None or color_selection is Colors.BLACK:
                     raise ValueError('color except black must be selected')
                 self.color_selection = color_selection
 

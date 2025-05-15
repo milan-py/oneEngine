@@ -4,10 +4,16 @@ from unoEngine.enums import *
 from unoEngine.rules import Rules
 
 
-@dataclass
+@dataclass(frozen=True)
 class Card:
     color: Colors
     card_type: CardTypes
+
+    def __post_init__(self):
+        if self.color is Colors.BLACK and self.card_type not in (CardTypes.COLOR_SELECT, CardTypes.ADD4):
+            raise ValueError(f'Card of type {self.card_type} cannot be black')
+        elif self.card_type in (CardTypes.COLOR_SELECT, CardTypes.ADD4) and self.color is not Colors.BLACK:
+            raise ValueError(f'Card of type {self.card_type} must be black')
 
     def other_is_playable(self, other: 'Card', rules: Rules, previous_color_selection: Colors | None = None) -> bool:
         """
@@ -18,14 +24,14 @@ class Card:
         :return: True if other can be stacked on self.
         """
         if self.card_type.value <= 11:
-            return self.card_type == other.card_type or self.color == other.color or other.color == Colors.BLACK
+            return self.card_type == other.card_type or self.color is other.color or other.color is Colors.BLACK
 
-        if self.card_type == CardTypes.ADD2:
-            return (self.color == other.color and other.card_type != CardTypes.ADD2) or (
-                    other.card_type == CardTypes.ADD2 and rules.add_2_stackable)
+        if self.card_type is CardTypes.ADD2:
+            return (self.color is other.color and other.card_type is not CardTypes.ADD2) or (
+                    other.card_type is CardTypes.ADD2 and rules.add_2_stackable)
 
-        if self.color == Colors.BLACK:
-            return other.color == previous_color_selection or (other.color == Colors.BLACK and rules.black_on_black)
+        if self.color is Colors.BLACK:
+            return other.color is previous_color_selection or (other.color is Colors.BLACK and rules.black_on_black)
 
         return rules.black_on_black
 

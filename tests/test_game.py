@@ -41,7 +41,8 @@ def test_challenge_rule(challenge_add_4, challenge_success):
     assert g.step(2)  # Player 0, Green 4
     player1_card_count = len(g.player_decks[1])
     player2_card_count = len(g.player_decks[2])
-    assert g.step(2, color_selection=Colors.RED, add_4_challenged=challenge_add_4)  # Player 1, add4, challenged by Player 2
+    assert g.step(2, color_selection=Colors.RED,
+                  add_4_challenged=challenge_add_4)  # Player 1, add4, challenged by Player 2
     assert g.step(None)  # Player 2, draws
     assert (len(g.player_decks[1]) == player1_card_count + 5 and len(
         g.player_decks[2]) == player2_card_count + 1) is challenge_success
