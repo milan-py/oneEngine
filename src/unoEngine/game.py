@@ -52,6 +52,10 @@ class Game:
     def _draw(self, player_index: int):
         self.player_decks[player_index].append(self.closed_deck.pop())
 
+    def raise_step_exception(self, message: str, played_card_index: int, played_card: Card):
+        self.current_player_deck.insert(played_card_index, played_card)  # inserts removed card again
+        raise ValueError(message)
+
     def step(self, played_card_index: int | None, color_selection: Colors | None = None,
              swap_player_selection: int | None = None,
              add_4_challenged: bool = False, ) -> bool:
@@ -91,7 +95,8 @@ class Game:
 
             case CardTypes.NUMBER_7 if self.rules.seven_swaps:
                 if swap_player_selection == self.current_turn or swap_player_selection is None:
-                    raise ValueError('swap player must be someone else')
+                    self.raise_step_exception('swap player must be someone else', played_card_index, played_card)
+                    return False
 
                 self.player_decks[self.current_turn], self.player_decks[swap_player_selection] \
                     = self.player_decks[swap_player_selection], self.player_decks[self.current_turn]
@@ -109,12 +114,14 @@ class Game:
 
             case CardTypes.COLOR_SELECT:
                 if color_selection is None or color_selection is Colors.BLACK:
-                    raise ValueError('color except black must be selected')
+                    self.raise_step_exception('color except black must be selected', played_card_index, played_card)
+                    return False
                 self.color_selection = color_selection
 
             case CardTypes.ADD4:
                 if color_selection is None or color_selection is Colors.BLACK:
-                    raise ValueError('color except black must be selected')
+                    self.raise_step_exception('color except black must be selected', played_card_index, played_card)
+                    return False
                 self.color_selection = color_selection
 
                 if (add_4_challenged and self.rules.add_4_challengeable and self.open_card.filter_playable_cards(
