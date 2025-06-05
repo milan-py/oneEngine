@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from unoEngine.enums import *
-from unoEngine.rules import Rules
+from oneEngine.enums import *
+from oneEngine.rules import Rules
 
 
 @dataclass(frozen=True)

@@ -2,7 +2,7 @@ from itertools import product
 
 import pytest
 
-from unoEngine import Card, Colors, CardTypes, Rules
+from oneEngine import Card, Colors, CardTypes, Rules
 
 for_all_rules = pytest.mark.parametrize(
     'black_on_black, zero_passes_on, seven_swaps, add_2_stackable, add_4_challengeable, draw_until_play, mandatory_playing',

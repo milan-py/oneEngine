@@ -2,7 +2,7 @@ from random import seed
 
 import pytest
 
-from unoEngine import Card, Colors, CardTypes, Game, Rules
+from oneEngine import Card, Colors, CardTypes, Game, Rules
 
 
 @pytest.mark.parametrize(

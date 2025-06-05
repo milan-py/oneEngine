@@ -1,37 +1,37 @@
-unoEngine package
+oneEngine package
 =================
 
 Submodules
 ----------
 
-unoEngine.card module
+oneEngine.card module
 ---------------------
 
-.. automodule:: unoEngine.card
+.. automodule:: oneEngine.card
    :members:
    :show-inheritance:
    :undoc-members:
 
-unoEngine.enums module
+oneEngine.enums module
 ----------------------
 
-.. automodule:: unoEngine.enums
+.. automodule:: oneEngine.enums
    :members:
    :show-inheritance:
    :undoc-members:
 
-unoEngine.game module
+oneEngine.game module
 ---------------------
 
-.. automodule:: unoEngine.game
+.. automodule:: oneEngine.game
    :members:
    :show-inheritance:
    :undoc-members:
 
-unoEngine.rules module
+oneEngine.rules module
 ----------------------
 
-.. automodule:: unoEngine.rules
+.. automodule:: oneEngine.rules
    :members:
    :show-inheritance:
    :undoc-members:
@@ -39,7 +39,7 @@ unoEngine.rules module
 Module contents
 ---------------
 
-.. automodule:: unoEngine
+.. automodule:: oneEngine
    :members:
    :show-inheritance:
    :undoc-members:

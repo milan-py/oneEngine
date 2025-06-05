@@ -1,8 +1,8 @@
 from collections import deque
 from random import shuffle
 
-from unoEngine.card import *
-from unoEngine.rules import Rules
+from oneEngine.card import *
+from oneEngine.rules import Rules
 
 
 class Game:
