@@ -46,13 +46,18 @@ class Game:
         self.direction = Directions.CLOCKWISE
         self.color_selection: Colors | None = None
 
-    def _step_index(self, current: int, steps: int):
+    def step_index(self, current: int, steps: int) -> int:
+        """
+        :param current: starting point
+        :param steps: number of steps taken in clockwise direction.
+        :return: index after taking steps from current.
+        """
         return (current + steps) % len(self.player_decks)
 
     def _draw(self, player_index: int):
         self.player_decks[player_index].append(self.closed_deck.pop())
 
-    def raise_step_exception(self, message: str, played_card_index: int, played_card: Card):
+    def _raise_step_exception(self, message: str, played_card_index: int, played_card: Card):
         self.current_player_deck.insert(played_card_index, played_card)  # inserts removed card again
         raise ValueError(message)
 
@@ -74,7 +79,7 @@ class Game:
             self._draw(self.current_turn)
 
             if not self.rules.draw_until_play:
-                self.current_turn = self._step_index(self.current_turn, self.direction.value)
+                self.current_turn = self.step_index(self.current_turn, self.direction.value)
             return True
 
         played_card = self.current_player_deck[played_card_index]
@@ -95,32 +100,32 @@ class Game:
 
             case CardTypes.NUMBER_7 if self.rules.seven_swaps:
                 if swap_player_selection == self.current_turn or swap_player_selection is None:
-                    self.raise_step_exception('swap player must be someone else', played_card_index, played_card)
+                    self._raise_step_exception('swap player must be someone else', played_card_index, played_card)
                     return False
 
                 self.player_decks[self.current_turn], self.player_decks[swap_player_selection] \
                     = self.player_decks[swap_player_selection], self.player_decks[self.current_turn]
 
             case CardTypes.BLOCK:
-                self.current_turn = self._step_index(self.current_turn, self.direction.value)
+                self.current_turn = self.step_index(self.current_turn, self.direction.value)
 
             case CardTypes.ROTATE:
                 self.direction = Directions.CLOCKWISE if self.direction is Directions.COUNTERCLOCKWISE else Directions.COUNTERCLOCKWISE
 
             case CardTypes.ADD2:
-                index = self._step_index(self.current_turn, self.direction.value)
+                index = self.step_index(self.current_turn, self.direction.value)
                 self._draw(index)
                 self._draw(index)
 
             case CardTypes.COLOR_SELECT:
                 if color_selection is None or color_selection is Colors.BLACK:
-                    self.raise_step_exception('color except black must be selected', played_card_index, played_card)
+                    self._raise_step_exception('color except black must be selected', played_card_index, played_card)
                     return False
                 self.color_selection = color_selection
 
             case CardTypes.ADD4:
                 if color_selection is None or color_selection is Colors.BLACK:
-                    self.raise_step_exception('color except black must be selected', played_card_index, played_card)
+                    self._raise_step_exception('color except black must be selected', played_card_index, played_card)
                     return False
                 self.color_selection = color_selection
 
@@ -132,9 +137,9 @@ class Game:
                         self._draw(self.current_turn)
                 else:
                     for _ in range(4):
-                        self._draw(self._step_index(self.current_turn, self.direction.value))
+                        self._draw(self.step_index(self.current_turn, self.direction.value))
 
-        self.current_turn = self._step_index(self.current_turn, self.direction.value)
+        self.current_turn = self.step_index(self.current_turn, self.direction.value)
         self.open_deck.append(played_card)
 
         if played_card.color != Colors.BLACK:
