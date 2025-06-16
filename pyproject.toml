@@ -1,11 +1,46 @@
 [build-system]
-requires = ["setuptools>=80.0.0", "wheel"]
+requires = ["setuptools>=80.9.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+version = "1.0.0"
+name = "oneEngine"
+description = "a simulation of a card game"
+authors = [
+    { name = "Milan", email = "milan.boemer@web.de" }
+]
+
+dependencies = []
+requires-python = ">= 3.10"
+
+[project.urls]
+Repository = "https://github.com/milan-py/oneEngine"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.optional-dependencies]
+docs = [
+    "sphinx_rtd_theme~=3.0.2",
+    "Sphinx~=8.2.3"
+]
+tests = [
+    "flake8~=7.2.0",
+    "pytest~=8.3.5",
+    "mypy~=0.910"
+]
+all = [
+    "oneEngine[docs,tests]"
+]
+
 
 [tool.pytest.ini_options]
 testpaths = [
     "tests",
 ]
+
+[tool.setuptools.package-data]
+oneEngine = ["py.typed"]
 
 [tool.mypy]
 mypy_path = "src"

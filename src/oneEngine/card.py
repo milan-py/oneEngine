@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from oneEngine.enums import *
+from oneEngine.enums import Colors, CardTypes
 from oneEngine.rules import Rules
 
 
