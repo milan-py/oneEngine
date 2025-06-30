@@ -131,11 +131,11 @@
         class="bp">self</span><span class="o">.</span><span class="n">closed_deck</span><span class="o">.</span><span
         class="n">pop</span><span class="p">()])</span>
         <span class="n">illegal_initial_card_types</span> <span class="o">=</span> <span class="p">[</span><span
-        class="n">CardTypes</span><span class="o">.</span><span class="n">BLOCK</span><span class="p">,</span> <span
-        class="n">CardTypes</span><span class="o">.</span><span class="n">ROTATE</span><span class="p">,</span> <span
-        class="n">CardTypes</span><span class="o">.</span><span class="n">ADD2</span><span class="p">,</span> <span
-        class="n">CardTypes</span><span class="o">.</span><span class="n">ADD4</span><span class="p">,</span>
-                                      <span class="n">CardTypes</span><span class="o">.</span><span class="n">COLOR_SELECT</span><span
+        class="n">CardType</span><span class="o">.</span><span class="n">BLOCK</span><span class="p">,</span> <span
+        class="n">CardType</span><span class="o">.</span><span class="n">ROTATE</span><span class="p">,</span> <span
+        class="n">CardType</span><span class="o">.</span><span class="n">ADD2</span><span class="p">,</span> <span
+        class="n">CardType</span><span class="o">.</span><span class="n">ADD4</span><span class="p">,</span>
+                                      <span class="n">CardType</span><span class="o">.</span><span class="n">COLOR_SELECT</span><span
         class="p">]</span>
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span
         class="n">open_deck</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span
@@ -169,7 +169,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span
         class="o">=</span> <span class="n">Directions</span><span class="o">.</span><span class="n">CLOCKWISE</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">color_selection</span><span
-        class="p">:</span> <span class="n">Colors</span> <span class="o">|</span> <span class="kc">None</span> <span
+        class="p">:</span> <span class="n">Color</span> <span class="o">|</span> <span class="kc">None</span> <span
         class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Game.step_index">
@@ -216,7 +216,8 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span
         class="bp">self</span><span class="p">,</span> <span class="n">played_card_index</span><span class="p">:</span> <span
         class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span
-        class="n">color_selection</span><span class="p">:</span> <span class="n">Colors</span> <span class="o">|</span> <span
+        class="n">color_selection</span><span class="p">:</span> <span class="n">Color</span> <span
+        class="o">|</span> <span
         class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">swap_player_selection</span><span class="p">:</span> <span class="nb">int</span> <span
         class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span
@@ -273,7 +274,7 @@
 
         <span class="k">match</span> <span class="n">played_card</span><span class="o">.</span><span
         class="n">card_type</span><span class="p">:</span>
-            <span class="k">case</span> <span class="n">CardTypes</span><span class="o">.</span><span
+            <span class="k">case</span> <span class="n">CardType</span><span class="o">.</span><span
         class="n">NUMBER_0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span
         class="n">rules</span><span class="o">.</span><span class="n">zero_passes_on</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span
@@ -293,7 +294,7 @@
         class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">begin</span><span
         class="p">)</span>
 
-            <span class="k">case</span> <span class="n">CardTypes</span><span class="o">.</span><span
+            <span class="k">case</span> <span class="n">CardType</span><span class="o">.</span><span
         class="n">NUMBER_7</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span
         class="n">rules</span><span class="o">.</span><span class="n">seven_swaps</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">swap_player_selection</span> <span class="o">==</span> <span
@@ -315,7 +316,7 @@
         class="bp">self</span><span class="o">.</span><span class="n">player_decks</span><span class="p">[</span><span
         class="bp">self</span><span class="o">.</span><span class="n">current_turn</span><span class="p">]</span>
 
-            <span class="k">case</span> <span class="n">CardTypes</span><span class="o">.</span><span
+            <span class="k">case</span> <span class="n">CardType</span><span class="o">.</span><span
         class="n">BLOCK</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_turn</span> <span class="o">=</span> <span
         class="bp">self</span><span class="o">.</span><span class="n">step_index</span><span class="p">(</span><span
@@ -323,7 +324,7 @@
         class="bp">self</span><span class="o">.</span><span class="n">direction</span><span class="o">.</span><span
         class="n">value</span><span class="p">)</span>
 
-            <span class="k">case</span> <span class="n">CardTypes</span><span class="o">.</span><span
+            <span class="k">case</span> <span class="n">CardType</span><span class="o">.</span><span
         class="n">ROTATE</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span
         class="o">=</span> <span class="n">Directions</span><span class="o">.</span><span
@@ -332,7 +333,7 @@
         class="o">.</span><span class="n">COUNTERCLOCKWISE</span> <span class="k">else</span> <span
         class="n">Directions</span><span class="o">.</span><span class="n">COUNTERCLOCKWISE</span>
 
-            <span class="k">case</span> <span class="n">CardTypes</span><span class="o">.</span><span
+            <span class="k">case</span> <span class="n">CardType</span><span class="o">.</span><span
         class="n">ADD2</span><span class="p">:</span>
                 <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span
         class="o">.</span><span class="n">step_index</span><span class="p">(</span><span class="bp">self</span><span
@@ -344,11 +345,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_draw</span><span class="p">(</span><span
         class="n">index</span><span class="p">)</span>
 
-            <span class="k">case</span> <span class="n">CardTypes</span><span class="o">.</span><span class="n">COLOR_SELECT</span><span
+            <span class="k">case</span> <span class="n">CardType</span><span class="o">.</span><span class="n">COLOR_SELECT</span><span
         class="p">:</span>
                 <span class="k">if</span> <span class="n">color_selection</span> <span class="ow">is</span> <span
         class="kc">None</span> <span class="ow">or</span> <span class="n">color_selection</span> <span
-        class="ow">is</span> <span class="n">Colors</span><span class="o">.</span><span class="n">BLACK</span><span
+        class="ow">is</span> <span class="n">Color</span><span class="o">.</span><span class="n">BLACK</span><span
         class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span
         class="n">_raise_step_exception</span><span class="p">(</span><span class="s1">&#39;color except black must be selected&#39;</span><span
@@ -358,11 +359,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">color_selection</span> <span
         class="o">=</span> <span class="n">color_selection</span>
 
-            <span class="k">case</span> <span class="n">CardTypes</span><span class="o">.</span><span
+            <span class="k">case</span> <span class="n">CardType</span><span class="o">.</span><span
         class="n">ADD4</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">color_selection</span> <span class="ow">is</span> <span
         class="kc">None</span> <span class="ow">or</span> <span class="n">color_selection</span> <span
-        class="ow">is</span> <span class="n">Colors</span><span class="o">.</span><span class="n">BLACK</span><span
+        class="ow">is</span> <span class="n">Color</span><span class="o">.</span><span class="n">BLACK</span><span
         class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span
         class="n">_raise_step_exception</span><span class="p">(</span><span class="s1">&#39;color except black must be selected&#39;</span><span
@@ -405,7 +406,7 @@
         class="p">)</span>
 
         <span class="k">if</span> <span class="n">played_card</span><span class="o">.</span><span class="n">color</span> <span
-        class="o">!=</span> <span class="n">Colors</span><span class="o">.</span><span class="n">BLACK</span><span
+        class="o">!=</span> <span class="n">Color</span><span class="o">.</span><span class="n">BLACK</span><span
         class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">color_selection</span> <span
         class="o">=</span> <span class="kc">None</span>

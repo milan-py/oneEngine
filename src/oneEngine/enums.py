@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class CardTypes(Enum):
+class CardType(Enum):
     NUMBER_0 = 0
     NUMBER_1 = 1
     NUMBER_2 = 2
@@ -19,7 +19,7 @@ class CardTypes(Enum):
     ADD4 = 14
 
 
-class Colors(Enum):
+class Color(Enum):
     BLUE = 0
     GREEN = 1
     YELLOW = 2

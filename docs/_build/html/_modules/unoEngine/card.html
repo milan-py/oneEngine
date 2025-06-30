@@ -83,27 +83,27 @@
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span
         class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Card</span><span class="p">:</span>
-    <span class="n">color</span><span class="p">:</span> <span class="n">Colors</span>
-    <span class="n">card_type</span><span class="p">:</span> <span class="n">CardTypes</span>
+    <span class="n">color</span><span class="p">:</span> <span class="n">Color</span>
+    <span class="n">card_type</span><span class="p">:</span> <span class="n">CardType</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span
         class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span
-        class="ow">is</span> <span class="n">Colors</span><span class="o">.</span><span class="n">BLACK</span> <span
+        class="ow">is</span> <span class="n">Color</span><span class="o">.</span><span class="n">BLACK</span> <span
         class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">card_type</span> <span
-        class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">CardTypes</span><span
+        class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">CardType</span><span
         class="o">.</span><span class="n">COLOR_SELECT</span><span class="p">,</span> <span
-        class="n">CardTypes</span><span class="o">.</span><span class="n">ADD4</span><span class="p">):</span>
+        class="n">CardType</span><span class="o">.</span><span class="n">ADD4</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span
         class="sa">f</span><span class="s1">&#39;Card of type </span><span class="si">{</span><span
         class="bp">self</span><span class="o">.</span><span class="n">card_type</span><span class="si">}</span><span
         class="s1"> cannot be black&#39;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">card_type</span> <span
-        class="ow">in</span> <span class="p">(</span><span class="n">CardTypes</span><span class="o">.</span><span
-        class="n">COLOR_SELECT</span><span class="p">,</span> <span class="n">CardTypes</span><span
+        class="ow">in</span> <span class="p">(</span><span class="n">CardType</span><span class="o">.</span><span
+        class="n">COLOR_SELECT</span><span class="p">,</span> <span class="n">CardType</span><span
         class="o">.</span><span class="n">ADD4</span><span class="p">)</span> <span class="ow">and</span> <span
         class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="ow">is</span> <span
-        class="ow">not</span> <span class="n">Colors</span><span class="o">.</span><span class="n">BLACK</span><span
+        class="ow">not</span> <span class="n">Color</span><span class="o">.</span><span class="n">BLACK</span><span
         class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span
         class="sa">f</span><span class="s1">&#39;Card of type </span><span class="si">{</span><span
@@ -116,7 +116,8 @@
         class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span
         class="p">:</span> <span class="s1">&#39;Card&#39;</span><span class="p">,</span> <span
         class="n">rules</span><span class="p">:</span> <span class="n">Rules</span><span class="p">,</span> <span
-        class="n">previous_color_selection</span><span class="p">:</span> <span class="n">Colors</span> <span class="o">|</span> <span
+        class="n">previous_color_selection</span><span class="p">:</span> <span class="n">Color</span> <span
+        class="o">|</span> <span
         class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span
         class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -134,30 +135,30 @@
         class="n">card_type</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span
         class="n">color</span> <span class="ow">is</span> <span class="n">other</span><span class="o">.</span><span
         class="n">color</span> <span class="ow">or</span> <span class="n">other</span><span class="o">.</span><span
-        class="n">color</span> <span class="ow">is</span> <span class="n">Colors</span><span class="o">.</span><span
+        class="n">color</span> <span class="ow">is</span> <span class="n">Color</span><span class="o">.</span><span
         class="n">BLACK</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span
-        class="n">card_type</span> <span class="ow">is</span> <span class="n">CardTypes</span><span
+        class="n">card_type</span> <span class="ow">is</span> <span class="n">CardType</span><span
         class="o">.</span><span class="n">ADD2</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span
         class="o">.</span><span class="n">color</span> <span class="ow">is</span> <span class="n">other</span><span
         class="o">.</span><span class="n">color</span> <span class="ow">and</span> <span class="n">other</span><span
         class="o">.</span><span class="n">card_type</span> <span class="ow">is</span> <span class="ow">not</span> <span
-        class="n">CardTypes</span><span class="o">.</span><span class="n">ADD2</span><span class="p">)</span> <span
+        class="n">CardType</span><span class="o">.</span><span class="n">ADD2</span><span class="p">)</span> <span
         class="ow">or</span> <span class="p">(</span>
                     <span class="n">other</span><span class="o">.</span><span class="n">card_type</span> <span
-        class="ow">is</span> <span class="n">CardTypes</span><span class="o">.</span><span class="n">ADD2</span> <span
+        class="ow">is</span> <span class="n">CardType</span><span class="o">.</span><span class="n">ADD2</span> <span
         class="ow">and</span> <span class="n">rules</span><span class="o">.</span><span class="n">add_2_stackable</span><span
         class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span
-        class="ow">is</span> <span class="n">Colors</span><span class="o">.</span><span class="n">BLACK</span><span
+        class="ow">is</span> <span class="n">Color</span><span class="o">.</span><span class="n">BLACK</span><span
         class="p">:</span>
             <span class="k">return</span> <span class="n">other</span><span class="o">.</span><span
         class="n">color</span> <span class="ow">is</span> <span class="n">previous_color_selection</span> <span
         class="ow">or</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span
-        class="n">color</span> <span class="ow">is</span> <span class="n">Colors</span><span class="o">.</span><span
+        class="n">color</span> <span class="ow">is</span> <span class="n">Color</span><span class="o">.</span><span
         class="n">BLACK</span> <span class="ow">and</span> <span class="n">rules</span><span class="o">.</span><span
         class="n">black_on_black</span><span class="p">)</span>
 
@@ -172,7 +173,7 @@
         class="p">:</span> <span class="nb">list</span><span class="p">[</span><span
         class="s1">&#39;Card&#39;</span><span class="p">],</span> <span class="n">rules</span><span
         class="p">:</span> <span class="n">Rules</span><span class="p">,</span>
-                              <span class="n">previous_color_selection</span><span class="p">:</span> <span class="n">Colors</span> <span
+                              <span class="n">previous_color_selection</span><span class="p">:</span> <span class="n">Color</span> <span
         class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span
         class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span
         class="s1">&#39;Card&#39;</span><span class="p">]:</span>
@@ -191,9 +192,9 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span
         class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Card(Colors.</span><span
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Card(Color.</span><span
         class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span
-        class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">, CardTypes.</span><span
+        class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">, CardType.</span><span
         class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">card_type</span><span
         class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">)&#39;</span></div>
 
@@ -216,21 +217,21 @@
         class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span
         class="mi">10</span><span class="p">):</span>
             <span class="n">card_deck</span><span class="o">.</span><span class="n">append</span><span
-        class="p">(</span><span class="n">Card</span><span class="p">(</span><span class="n">Colors</span><span
-        class="p">(</span><span class="n">color</span><span class="p">),</span> <span class="n">CardTypes</span><span
+        class="p">(</span><span class="n">Card</span><span class="p">(</span><span class="n">Color</span><span
+        class="p">(</span><span class="n">color</span><span class="p">),</span> <span class="n">CardType</span><span
         class="p">(</span><span class="n">card_type</span><span class="p">)))</span>
 
         <span class="n">card_deck</span><span class="o">.</span><span class="n">append</span><span
-        class="p">(</span><span class="n">Card</span><span class="p">(</span><span class="n">Colors</span><span
-        class="p">(</span><span class="n">color</span><span class="p">),</span> <span class="n">CardTypes</span><span
+        class="p">(</span><span class="n">Card</span><span class="p">(</span><span class="n">Color</span><span
+        class="p">(</span><span class="n">color</span><span class="p">),</span> <span class="n">CardType</span><span
         class="o">.</span><span class="n">BLOCK</span><span class="p">))</span>
         <span class="n">card_deck</span><span class="o">.</span><span class="n">append</span><span
-        class="p">(</span><span class="n">Card</span><span class="p">(</span><span class="n">Colors</span><span
-        class="p">(</span><span class="n">color</span><span class="p">),</span> <span class="n">CardTypes</span><span
+        class="p">(</span><span class="n">Card</span><span class="p">(</span><span class="n">Color</span><span
+        class="p">(</span><span class="n">color</span><span class="p">),</span> <span class="n">CardType</span><span
         class="o">.</span><span class="n">ROTATE</span><span class="p">))</span>
         <span class="n">card_deck</span><span class="o">.</span><span class="n">append</span><span
-        class="p">(</span><span class="n">Card</span><span class="p">(</span><span class="n">Colors</span><span
-        class="p">(</span><span class="n">color</span><span class="p">),</span> <span class="n">CardTypes</span><span
+        class="p">(</span><span class="n">Card</span><span class="p">(</span><span class="n">Color</span><span
+        class="p">(</span><span class="n">color</span><span class="p">),</span> <span class="n">CardType</span><span
         class="o">.</span><span class="n">ADD2</span><span class="p">))</span>
 
     <span class="n">card_deck</span> <span class="o">=</span> <span class="n">card_deck</span> <span class="o">*</span> <span
@@ -239,17 +240,17 @@
     <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span
         class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
         <span class="n">card_deck</span><span class="o">.</span><span class="n">append</span><span
-        class="p">(</span><span class="n">Card</span><span class="p">(</span><span class="n">Colors</span><span
-        class="p">(</span><span class="n">color</span><span class="p">),</span> <span class="n">CardTypes</span><span
+        class="p">(</span><span class="n">Card</span><span class="p">(</span><span class="n">Color</span><span
+        class="p">(</span><span class="n">color</span><span class="p">),</span> <span class="n">CardType</span><span
         class="o">.</span><span class="n">NUMBER_0</span><span class="p">))</span>
 
     <span class="n">card_deck</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Card</span><span
-        class="p">(</span><span class="n">Colors</span><span class="o">.</span><span class="n">BLACK</span><span
-        class="p">,</span> <span class="n">CardTypes</span><span class="o">.</span><span
+        class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">BLACK</span><span
+        class="p">,</span> <span class="n">CardType</span><span class="o">.</span><span
         class="n">COLOR_SELECT</span><span class="p">)]</span> <span class="o">*</span> <span class="mi">4</span>
     <span class="n">card_deck</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Card</span><span
-        class="p">(</span><span class="n">Colors</span><span class="o">.</span><span class="n">BLACK</span><span
-        class="p">,</span> <span class="n">CardTypes</span><span class="o">.</span><span class="n">ADD4</span><span
+        class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">BLACK</span><span
+        class="p">,</span> <span class="n">CardType</span><span class="o">.</span><span class="n">ADD4</span><span
         class="p">)]</span> <span class="o">*</span> <span class="mi">4</span>
 
     <span class="k">return</span> <span class="n">card_deck</span></div>

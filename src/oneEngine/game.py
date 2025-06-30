@@ -2,8 +2,13 @@ from collections import deque
 from random import shuffle
 
 from oneEngine.card import Card, get_standard_card_deck
-from oneEngine.enums import CardTypes, Colors, Directions
+from oneEngine.enums import CardType, Color, Directions
 from oneEngine.rules import Rules
+
+
+class GameStop(Exception):
+    def __init__(self):
+        super().__init__()
 
 
 class Game:
@@ -20,7 +25,6 @@ class Game:
 
     def __init__(self, player_count: int, rules: Rules, deck: list[Card] | None = None):
         """
-
         :param player_count:
         :param rules:
         :param deck: list of cards that should be used in the game. get_standard_card_deck() used if None.
@@ -31,8 +35,8 @@ class Game:
         shuffle(self.closed_deck)
 
         self.open_deck: deque[Card] = deque([self.closed_deck.pop()])
-        illegal_initial_card_types = [CardTypes.BLOCK, CardTypes.ROTATE, CardTypes.ADD2, CardTypes.ADD4,
-                                      CardTypes.COLOR_SELECT]
+        illegal_initial_card_types = [CardType.BLOCK, CardType.ROTATE, CardType.ADD2, CardType.ADD4,
+                                      CardType.COLOR_SELECT]
         while self.open_deck[0].card_type in illegal_initial_card_types:
             self.open_deck[0] = self.closed_deck.pop()
 
@@ -45,7 +49,7 @@ class Game:
         self.rules = rules
         self.current_turn: int = 0
         self.direction = Directions.CLOCKWISE
-        self.color_selection: Colors | None = None
+        self.color_selection: Color | None = None
 
     def step_index(self, current: int, steps: int) -> int:
         """
@@ -62,7 +66,7 @@ class Game:
         self.current_player_deck.insert(played_card_index, played_card)  # inserts removed card again
         raise ValueError(message)
 
-    def step(self, played_card_index: int | None, color_selection: Colors | None = None,
+    def step(self, played_card_index: int | None, color_selection: Color | None = None,
              swap_player_selection: int | None = None,
              add_4_challenged: bool = False, ) -> bool:
         """
@@ -70,14 +74,26 @@ class Game:
         :param color_selection: a color except black must be given when played_card_index points to a card of type.
         :param swap_player_selection:
         :param add_4_challenged:
-        :return: True if card is playable or not playing is possible
+        :raises GameStop: raised when game stopped (i.e. no one has at least one card).
+        :return: True if move is allowed.
         """
-        if played_card_index is None:
+        if not any(self.player_decks):
+            raise GameStop()
+        while not self.current_player_deck:  # skips players with no cards.
+            self.current_turn = self.step_index(self.current_turn, 1)
+
+        if played_card_index is None:  # draw is attempted
             if self.rules.mandatory_playing and self.open_card.filter_playable_cards(self.current_player_deck,
                                                                                      self.rules, self.color_selection):
                 return False
 
             self._draw(self.current_turn)
+
+            if not self.closed_deck:  # reshuffles when closed deck is empty
+                print('SHUFFLING')
+                shuffle(self.open_deck)
+                self.closed_deck = self.open_deck.copy()
+                self.open_deck = []
 
             if not self.rules.draw_until_play:
                 self.current_turn = self.step_index(self.current_turn, self.direction.value)
@@ -91,7 +107,7 @@ class Game:
         del self.current_player_deck[played_card_index]
 
         match played_card.card_type:
-            case CardTypes.NUMBER_0 if self.rules.zero_passes_on:
+            case CardType.NUMBER_0 if self.rules.zero_passes_on:
                 if self.direction is Directions.CLOCKWISE:
                     self.player_decks.insert(0, self.player_decks.pop())
                 else:
@@ -99,7 +115,7 @@ class Game:
                     del self.player_decks[0]
                     self.player_decks.append(begin)
 
-            case CardTypes.NUMBER_7 if self.rules.seven_swaps:
+            case CardType.NUMBER_7 if self.rules.seven_swaps:
                 if swap_player_selection == self.current_turn or swap_player_selection is None:
                     self._raise_step_exception('swap player must be someone else', played_card_index, played_card)
                     return False
@@ -107,25 +123,25 @@ class Game:
                 self.player_decks[self.current_turn], self.player_decks[swap_player_selection] \
                     = self.player_decks[swap_player_selection], self.player_decks[self.current_turn]
 
-            case CardTypes.BLOCK:
+            case CardType.BLOCK:
                 self.current_turn = self.step_index(self.current_turn, self.direction.value)
 
-            case CardTypes.ROTATE:
+            case CardType.ROTATE:
                 self.direction = Directions.CLOCKWISE if self.direction is Directions.COUNTERCLOCKWISE else Directions.COUNTERCLOCKWISE
 
-            case CardTypes.ADD2:
+            case CardType.ADD2:
                 index = self.step_index(self.current_turn, self.direction.value)
                 self._draw(index)
                 self._draw(index)
 
-            case CardTypes.COLOR_SELECT:
-                if color_selection is None or color_selection is Colors.BLACK:
+            case CardType.COLOR_SELECT:
+                if color_selection is None or color_selection is Color.BLACK:
                     self._raise_step_exception('color except black must be selected', played_card_index, played_card)
                     return False
                 self.color_selection = color_selection
 
-            case CardTypes.ADD4:
-                if color_selection is None or color_selection is Colors.BLACK:
+            case CardType.ADD4:
+                if color_selection is None or color_selection is Color.BLACK:
                     self._raise_step_exception('color except black must be selected', played_card_index, played_card)
                     return False
                 self.color_selection = color_selection
@@ -143,7 +159,10 @@ class Game:
         self.current_turn = self.step_index(self.current_turn, self.direction.value)
         self.open_deck.append(played_card)
 
-        if played_card.color != Colors.BLACK:
+        if not any(self.player_decks):
+            raise GameStop()
+
+        if played_card.color != Color.BLACK:
             self.color_selection = None
 
         return True
