@@ -52,7 +52,7 @@ def test_challenge_rule(challenge_add_4, challenge_success):
 def test_game_stop():
     seed(3)
 
-    g = Game(1, Rules(player_card_count=1), )
+    g = Game(1, Rules(player_card_count=1))
     with pytest.raises(GameStop):
         g.step(0)
 
@@ -63,6 +63,8 @@ def test_reshuffle():
     g = Game(1, Rules(player_card_count=1),
              deck=[Card(Color.GREEN, CardType.NUMBER_1), Card(Color.RED, CardType.NUMBER_2),
                    Card(Color.YELLOW, CardType.NUMBER_3)])
+
+    g.step(played_card_index=None)
 
     assert g.open_deck == []
     assert list(g.closed_deck) == [Card(Color.GREEN, CardType.NUMBER_1)]
