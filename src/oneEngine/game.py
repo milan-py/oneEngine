@@ -77,11 +77,6 @@ class Game:
         :raises GameStop: raised when game stopped (i.e. no one has at least one card).
         :return: True if move is allowed.
         """
-        if not any(self.player_decks):
-            raise GameStop()
-        while not self.current_player_deck:  # skips players with no cards.
-            self.current_turn = self.step_index(self.current_turn, 1)
-
         if played_card_index is None:  # draw is attempted
             if self.rules.mandatory_playing and self.open_card.filter_playable_cards(self.current_player_deck,
                                                                                      self.rules, self.color_selection):
@@ -157,6 +152,13 @@ class Game:
                         self._draw(self.step_index(self.current_turn, self.direction.value))
 
         self.current_turn = self.step_index(self.current_turn, self.direction.value)
+
+        if not any(self.player_decks):
+            raise GameStop()
+
+        while not self.current_player_deck:  # skips players with no cards.
+            self.current_turn = self.step_index(self.current_turn, 1)
+
         self.open_deck.append(played_card)
 
         if not any(self.player_decks):
