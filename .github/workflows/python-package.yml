@@ -26,7 +26,7 @@ jobs:
       - name: install project
         run: |
           uv venv
-          uv pip install .[test]
+          uv pip install .[tests]
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
