@@ -1,3 +1,4 @@
+from collections import deque
 from random import seed
 
 import pytest
@@ -28,12 +29,12 @@ def test_zero_passes_on_rule(zero_passes_on, expected):
 
 
 @pytest.mark.parametrize(
-    'challenge_add_4,challenge_success', [
-        (True, True),
-        (False, False)
+    'challenge_add_4', [
+        True,
+        False,
     ]
 )
-def test_challenge_rule(challenge_add_4, challenge_success):
+def test_challenge_rule(challenge_add_4):
     seed(1)
 
     g = Game(3, Rules())
@@ -43,10 +44,47 @@ def test_challenge_rule(challenge_add_4, challenge_success):
     assert g.step(2, color_selection=Color.RED,
                   add_4_challenged=challenge_add_4)  # Player 1, add4, challenged by Player 2
     assert g.step(None)  # Player 2, draws
-    assert (len(g.player_decks[1]) == player1_card_count + 5 and len(
-        g.player_decks[2]) == player2_card_count + 1) is challenge_success
-    assert (len(g.player_decks[1]) == player1_card_count - 1 and len(
-        g.player_decks[2]) == player2_card_count + 5) is not challenge_success
+
+    if challenge_add_4:
+        assert len(g.player_decks[1]) == player1_card_count + 4 - 1
+
+        assert len(g.player_decks[2]) == player2_card_count + 1
+    else:
+        assert len(g.player_decks[1]) == player1_card_count - 1
+
+        assert len(g.player_decks[2]) == player2_card_count + 4 + 1
+
+
+@pytest.mark.parametrize(
+    'challenge_add_4', [
+        False,
+        True,
+    ]
+)
+def test_failed_challenge_rule(challenge_add_4):
+    seed(1)
+
+    g = Game(3, Rules(mandatory_playing=False))
+    assert g.step(2)  # Player 0, Green 4
+
+    del g.player_decks[1][4]  # deletes other possible cards
+    del g.player_decks[1][0]  # deletes other possible cards
+
+    player1_card_count = len(g.player_decks[1])
+    player2_card_count = len(g.player_decks[2])
+
+    assert g.step(1, color_selection=Color.RED,
+                  add_4_challenged=challenge_add_4)  # Player 1, add4, challenged by Player 2
+    assert g.step(None)  # Player 2, draws
+
+    if challenge_add_4:
+        assert len(g.player_decks[1]) == player1_card_count - 1
+
+        assert len(g.player_decks[2]) == player2_card_count + 6 + 1
+    else:
+        assert len(g.player_decks[1]) == player1_card_count - 1
+
+        assert len(g.player_decks[2]) == player2_card_count + 4 + 1
 
 
 def test_game_stop():
@@ -66,6 +104,6 @@ def test_reshuffle():
 
     g.step(played_card_index=None)
 
-    assert g.open_deck == []
+    assert g.open_deck == deque([])
     assert list(g.closed_deck) == [Card(Color.GREEN, CardType.NUMBER_1)]
     assert g.player_decks == [[Card(Color.YELLOW, CardType.NUMBER_3), Card(Color.RED, CardType.NUMBER_2)]]

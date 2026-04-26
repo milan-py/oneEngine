@@ -4,7 +4,7 @@ from oneEngine.enums import Color, CardType
 from oneEngine.rules import Rules
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class Card:
     color: Color
     card_type: CardType

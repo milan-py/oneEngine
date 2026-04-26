@@ -50,6 +50,7 @@ class Game:
         self.current_turn: int = 0
         self.direction = Directions.CLOCKWISE
         self.color_selection: Color | None = None
+        self.accumulated_draw_count = 0
 
     def step_index(self, current: int, steps: int) -> int:
         """
@@ -82,13 +83,15 @@ class Game:
                                                                                      self.rules, self.color_selection):
                 return False
 
+            if self.accumulated_draw_count != 0:  # if the player has a playable add2 or add4, they are not allowed to draw anyway.
+                return False
+
             self._draw(self.current_turn)
 
             if not self.closed_deck:  # reshuffles when closed deck is empty
-                print('SHUFFLING')
                 shuffle(self.open_deck)
                 self.closed_deck = self.open_deck.copy()
-                self.open_deck = []
+                self.open_deck = deque()
 
             if not self.rules.draw_until_play:
                 self.current_turn = self.step_index(self.current_turn, self.direction.value)
@@ -125,9 +128,7 @@ class Game:
                 self.direction = Directions.CLOCKWISE if self.direction is Directions.COUNTERCLOCKWISE else Directions.COUNTERCLOCKWISE
 
             case CardType.ADD2:
-                index = self.step_index(self.current_turn, self.direction.value)
-                self._draw(index)
-                self._draw(index)
+                self.accumulated_draw_count += 2
 
             case CardType.COLOR_SELECT:
                 if color_selection is None or color_selection is Color.BLACK:
@@ -145,11 +146,17 @@ class Game:
                         self.current_player_deck, self.rules,
                         self.color_selection
                 )):  # player could have played different cards
-                    for _ in range(6):
-                        self._draw(self.current_turn)
-                else:
                     for _ in range(4):
-                        self._draw(self.step_index(self.current_turn, self.direction.value))
+                        self._draw(self.current_turn)
+                elif add_4_challenged and self.rules.add_4_challengeable:
+                    self.accumulated_draw_count += 6  # challenge failed
+                else:
+                    self.accumulated_draw_count += 4
+
+        if played_card.card_type is not CardType.ADD2 and played_card.card_type is not CardType.ADD4:  # if the player for some reason decides not to lay an add2 or add4 despite being attacked, they have to draw
+            for _ in range(self.accumulated_draw_count):
+                self._draw(self.current_turn)
+            self.accumulated_draw_count = 0
 
         self.current_turn = self.step_index(self.current_turn, self.direction.value)
 
@@ -157,7 +164,7 @@ class Game:
             raise GameStop()
 
         while not self.current_player_deck:  # skips players with no cards.
-            self.current_turn = self.step_index(self.current_turn, 1)
+            self.current_turn = self.step_index(self.current_turn, self.direction.value)
 
         self.open_deck.append(played_card)
 
@@ -166,5 +173,14 @@ class Game:
 
         if played_card.color != Color.BLACK:
             self.color_selection = None
+
+        # lets next player draw cards if some have been stacked and the player has no playable add2 or add4
+        playable_add_cards = filter(lambda card: card.card_type is CardType.ADD2 or card.card_type is CardType.ADD4,
+                                    self.open_card.filter_playable_cards(self.current_player_deck, self.rules,
+                                                                         self.color_selection))
+        if not list(playable_add_cards):
+            for _ in range(self.accumulated_draw_count):
+                self._draw(self.current_turn)
+            self.accumulated_draw_count = 0
 
         return True
