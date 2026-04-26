@@ -15,9 +15,9 @@ jobs:
       - name: Setup Python
         run: |
           uv python install
-      - name: Get Dependencies
+      - name: install project
         run: |
-          uv sync
+          uv install .[docs]
       - name: Sphinx build
         run: |
           uv run sphinx-build docs docs/_build
