@@ -17,6 +17,7 @@ jobs:
           uv python install
       - name: install project
         run: |
+          uv venv
           uv pip install .[docs]
       - name: Sphinx build
         run: |
